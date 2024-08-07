@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useRef, useState, useEffect } from 'react'
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
+import { getDownloadURL, getStorage, list, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase'
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart } from '../redux/user/userSlice'
 import { Link } from 'react-router-dom'
@@ -141,6 +141,7 @@ function Profile() {
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
+      {/* <h1 className='text-[#5C4033] text-3xl font-semibold text-center my-7'>Profile</h1> */}
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input onChange={(e) => setFile(e.target.files[0])} type="file" ref={fileRef} hidden accept='image/*' />
         <img
@@ -187,6 +188,9 @@ function Profile() {
         <button disabled={loading} className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>
           {loading ? 'Loading...' : 'Update'}
         </button>
+        {/* <button disabled={loading} className='bg-[#228B22] text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>
+          {loading ? 'Loading...' : 'Update'}
+        </button> */}
 
         <Link
           className='bg-green-700 text-white rounded-lg uppercase text-center hover:opacity-95 p-3'
@@ -194,6 +198,12 @@ function Profile() {
         >
           Create Listing
         </Link>
+        {/* <Link
+          className='bg-[#A0522D] text-white rounded-lg uppercase text-center hover:opacity-95 p-3'
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link> */}
 
       </form>
       <div className='flex justify-between mt-5'>
@@ -239,7 +249,12 @@ function Profile() {
 
               <div className="flex flex-col items-center">
                 <button onClick={() => handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
-                <button className='text-green-700 uppercase'>Edit</button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button 
+                    className='text-green-700 uppercase'>
+                      Edit
+                  </button>
+                </Link>
               </div>
             </div>
           ))
