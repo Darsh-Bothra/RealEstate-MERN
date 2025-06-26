@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useRef, useState, useEffect } from 'react'
-import { getDownloadURL, getStorage, list, ref, uploadBytesResumable } from 'firebase/storage'
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase'
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart } from '../redux/user/userSlice'
 import { Link } from 'react-router-dom'
+import { use } from 'react'
 
 function Profile() {
   const fileRef = useRef(null)
-  const { currentUser, loading, error } = useSelector((state) => state.user)
+  const { currentUser, loading } = useSelector((state) => state.user)
   const [file, setFile] = useState(undefined);
   console.log(file);
   const [filePer, setFilePer] = useState(0);
@@ -16,6 +17,8 @@ function Profile() {
   const [updateSuccess, setUpdateSuccess] = useState(false)
   const [userListing, setUserListing] = useState([])
   const [showListingError, setShowListingError] = useState(false);
+  const [showListing, setShowListing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
 
 
@@ -37,7 +40,8 @@ function Profile() {
       setFilePer(Math.round(progess))
     },
       (error) => {
-        setFileUploadError(true);
+        console.log(error);
+        setFileUploadError(false);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
@@ -109,6 +113,7 @@ function Profile() {
 
   const handleShowListings = async () => {
     try {
+      setShowListing(true);
       setShowListingError(false);
       const res = await fetch(`/api/user/listings/${currentUser._id}`)
       const data = await res.json();
@@ -116,6 +121,7 @@ function Profile() {
         setShowListingError(true);
         return;
       }
+      console.log(data);
       setUserListing(data)
     } catch (error) {
       setShowListingError(true);
@@ -128,9 +134,9 @@ function Profile() {
         method: 'DELETE',
       })
       const data = await res.json();
-      if(data.success === false) {
+      if (data.success === false) {
         console.log(data.message);
-        return; 
+        return;
       }
       setUserListing((prev) => prev.filter((listing) => listing._id !== listingId));
     } catch (error) {
@@ -163,21 +169,19 @@ function Profile() {
         <input
           type="text"
           placeholder='username'
-          className='border p-3 rounded-lg'
+          className='border p-3 rounded-lg flex'
           id='username'
           defaultValue={currentUser.username}
           onChange={handleChange}
         />
-
-        <input
-          type="email"
-          placeholder='email'
-          className='border p-3 rounded-lg'
-          id='email'
-          defaultValue={currentUser.email}
-          onChange={handleChange}
-        />
-
+          <input
+            type="email"
+            placeholder='email'
+            className='border p-3 rounded-lg'
+            id='email'
+            defaultValue={currentUser.email}
+            onChange={handleChange}
+          />
         <input
           type="password"
           placeholder='password'
@@ -220,21 +224,22 @@ function Profile() {
           Sign out
         </span>
       </div>
-      <p className='text-red-700 mt-5'>{error ? error : ""}</p>
+      {/* <p className='text-red-700 mt-5'>{error ? error : ""}</p> */}
       <p className='text-green-700 mt-5'>{updateSuccess ? "User is update successfully" : ""}</p>
-      <button 
+      <button
         onClick={handleShowListings} className='text-green-700 w-full'>
-          Show Listing
+        Show Listing
       </button>
 
       <p className='text-red-700 mt-5'>{showListingError ? 'Error showing listing' : ""}</p>
 
-      <div className='flex flex-col gap-4'>
+
+      {/* <div className='flex flex-col gap-4'>
         <h1 className='text-center my-7 mt-7 text-2xl font-semibold'>Your Listing</h1>
         {userListing && userListing.length > 0 &&
           userListing.map((listing) => (
-            <div 
-              key={listing._id} 
+            <div
+              key={listing._id}
               className="border rounded-lg p-3 flex justify-between items-center gap-4">
               <Link to={`/listing/${listing._id}`}>
                 <img
@@ -250,9 +255,9 @@ function Profile() {
               <div className="flex flex-col items-center">
                 <button onClick={() => handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
                 <Link to={`/update-listing/${listing._id}`}>
-                  <button 
+                  <button
                     className='text-green-700 uppercase'>
-                      Edit
+                    Edit
                   </button>
                 </Link>
               </div>
@@ -260,7 +265,46 @@ function Profile() {
           ))
         }
 
+      </div> */}
+
+      <div className='flex flex-col gap-4'>
+        {userListing && showListing && (
+          <>
+            <h1 className='text-center my-7 mt-7 text-2xl font-semibold'>Your Listing</h1>
+            {userListing.length > 0 ? (
+              userListing.map((listing) => (
+                <div
+                  key={listing._id}
+                  className="border rounded-lg p-3 flex justify-between items-center gap-4">
+                  <Link to={`/listing/${listing._id}`}>
+                    <img
+                      src={listing.imageUrls[0]}
+                      alt="listing cover"
+                      className='h-16 w-16 object-contain'
+                    />
+                  </Link>
+                  <Link className='flex-1 text-slate-700 font-semibold hover:underline truncate' to={`/listing/${listing._id}`}>
+                    <p>{listing.name}</p>
+                  </Link>
+
+                  <div className="flex flex-col items-center">
+                    <button onClick={() => handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
+                    <Link to={`/update-listing/${listing._id}`}>
+                      <button
+                        className='text-green-700 uppercase'>
+                        Edit
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-600 mt-5">No listing available</p>
+            )}
+          </>
+        )}
       </div>
+
     </div>
   )
 }

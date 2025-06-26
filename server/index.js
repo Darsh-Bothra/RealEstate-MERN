@@ -8,18 +8,19 @@ import cookieParser from 'cookie-parser';
 // import cors from 'cors'
 dotenv.config()
 
+
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("Connected to Mongo");
-    })
-    .catch((err) => {
+.then(() => {
+    console.log("Connected to Mongo");
+})
+.catch((err) => {
         console.log("Mongodb not connected: ", err)
     })
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 // app.use(cors({
-//     origin: "http://localhost:8000",
+    //     origin: "http://localhost:8000",
 //     credentials: true
 // }))
 app.use("/api/user", userRouter)
@@ -41,3 +42,4 @@ app.use((err, req, res, next) => {
         message,
     });
 });
+

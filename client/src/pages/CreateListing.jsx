@@ -79,7 +79,7 @@ export default function CreateListing() {
     const handleRemoveImage = (index) => {
         setFormData({
             ...formData,
-            imgUrls: formData.imgUrls.filter((_, i) => i !== index),
+            imgUrls: formData.imageUrls.filter((_, i) => i !== index),
         })
     }
 
@@ -96,14 +96,12 @@ export default function CreateListing() {
                 [e.target.id]: e.target.checked
             })
         }
-
         if (e.target.type === 'number' || e.target.type === 'text' || e.target.type === 'textarea') {
             setFormData({
                 ...formData,
                 [e.target.id]: e.target.value
             })
         }
-
     }
 
     const handleSubmit = async (e) => {
