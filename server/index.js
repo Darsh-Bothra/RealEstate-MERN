@@ -33,9 +33,9 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
-const port = process.env.PORT || 8001;
+const port = 8000 || process.env.PORT;
 app.listen(port, () => {
-    console.log('Server is running on port 8000')
+    console.log(`Server is running on port ${port}`)
 });
 
 
