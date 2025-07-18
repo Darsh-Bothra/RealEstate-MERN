@@ -52,7 +52,7 @@ export default function Search() {
             setShowmore(false)
             setLoading(true);
             const searchQuery = urlParams.toString();
-            const res = await fetch(`/api/listing/get?${searchQuery}`);
+            const res = await fetch(`${process.env.VITE_API_URL}/api/listing/get?${searchQuery}`);
             const data = await res.json();
             if(data.length > 8) {
                 setShowmore(true);
@@ -121,7 +121,7 @@ export default function Search() {
         const urlParams = new URLSearchParams(location.search);
         urlParams.set('startIdx', startIdx);
         const searchQuery = urlParams.toString();
-        const res = await fetch(`/api/listing/get?${searchQuery}`);
+        const res = await fetch(`${process.env.VITE_API_URL}/api/listing/get?${searchQuery}`);
         const data = res.json();
         if(data.length < 9) {
             setShowmore(true);

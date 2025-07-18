@@ -18,7 +18,7 @@ function Home() {
   useEffect(() => {
     const fetchOfferListings = async () => {
       try {
-        const res = await fetch('/api/listing/get?offer=true&limit=4');
+        const res = await fetch(`${process.env.VITE_API_URL}/api/listing/get?offer=true&limit=4`);
         const data = await res.json();
         setOfferListing(data);
         fetchRentListings();
@@ -28,7 +28,7 @@ function Home() {
     }
     const fetchRentListings = async () => {
       try {
-        const res = await fetch('/api/listing/get?type=rent&limit=4');
+        const res = await fetch(`${process.env.VITE_API_URL}/api/listing/get?type=rent&limit=4`);
         const data = await res.json();
         setRentListing(data);
         fetchSaleListings();
@@ -38,7 +38,7 @@ function Home() {
     }
     const fetchSaleListings = async () => {
       try {
-        const res = await fetch('/api/listing/get?type=sale&limit=4');
+        const res = await fetch(`${process.env.VITE_API_URL}/api/listing/get?type=sale&limit=4`);
         const data = await res.json();
         setSaleListing(data);
       } catch (error) {

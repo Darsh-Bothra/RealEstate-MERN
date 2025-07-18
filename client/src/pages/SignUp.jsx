@@ -18,7 +18,7 @@ function SignUp() {
     try {
       e.preventDefault();
       setLoading(true);
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch(`${process.env.VITE_API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
